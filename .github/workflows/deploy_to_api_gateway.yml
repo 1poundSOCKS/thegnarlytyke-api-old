@@ -1,4 +1,4 @@
-name: Deploy to Amazon S3
+name: Deploy to Amazon API Gateway
 
 on:
   push:
