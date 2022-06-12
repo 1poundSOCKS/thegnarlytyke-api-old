@@ -7,7 +7,6 @@ on:
 
 env:
   AWS_REGION: eu-west-2
-  BUCKET_NAME: thegnarlytyke.com
   API_BUCKET_NAME: api.thegnarlytyke.com
 
 jobs:
@@ -20,44 +19,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    # - name: Set up node 
-    #   uses: actions/setup-node@v1
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
-    # - name: Clean cache
-    #   run: npm cache clean --force
-    #   working-directory: ./server
+    - uses: actions/setup-python@v2
 
-    # - name: Install dependencies
-    #   run: npm install
-    #   working-directory: ./server
+    - uses: aws-actions/setup-sam@v1
 
-    # - name: Build
-    #   run: npm run build
-    #   working-directory: ./server
+    - run: sam build --use-container
+      working-directory: ./
 
-    # - name: Run tests
-    #   run: npm test
-    #   working-directory: ./server
-
-    # - name: Configure AWS credentials
-    #   uses: aws-actions/configure-aws-credentials@v1
-    #   with:
-    #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     aws-region: ${{ env.AWS_REGION }}
-
-    # - name: Deploy static site to S3 bucket
-    #   run: aws s3 sync ./server/public/ s3://${{ env.BUCKET_NAME }} --exclude "config.json" --delete
-
-    # - name: Update environment configuration to 'prod'
-    #   run: aws s3 sync ./server/config/prod s3://${{ env.BUCKET_NAME }}
-
-    # - uses: actions/setup-python@v2
-
-    # - uses: aws-actions/setup-sam@v1
-
-    # - run: sam build --use-container
-    #   working-directory: ./
-
-    # - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name gnarly --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
-    #   working-directory: ./
+    - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name gnarly --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
+      working-directory: ./
