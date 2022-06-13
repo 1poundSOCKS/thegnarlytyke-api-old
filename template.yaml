@@ -38,6 +38,20 @@ Resources:
           Properties:
             Path: /save_image
             Method: post
+  SaveCragFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: save_crag/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Architectures:
+        - x86_64
+      Events:
+        SaveImage:
+          Type: Api
+          Properties:
+            Path: /save_crag
+            Method: post
 
 Outputs:
   GnarlyApi:
@@ -53,5 +67,11 @@ Outputs:
     Description: "Save Image Lambda Function ARN"
     Value: !GetAtt SaveImageFunction.Arn
   SaveImageFunctionIamRole:
-    Description: "Implicit IAM Role created for LoadImage function"
+    Description: "Implicit IAM Role created for SaveImage function"
     Value: !GetAtt SaveImageFunctionRole.Arn
+  SaveCragFunction:
+    Description: "Save Crag Lambda Function ARN"
+    Value: !GetAtt SaveCragFunction.Arn
+  SaveCragFunctionIamRole:
+    Description: "Implicit IAM Role created for SaveCrag function"
+    Value: !GetAtt SaveCragFunctionRole.Arn
