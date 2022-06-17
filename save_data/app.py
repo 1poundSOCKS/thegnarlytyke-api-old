@@ -13,7 +13,7 @@ def lambda_handler(event, context):
     request_data = event['queryStringParameters']
     object_id = request_data['id']
 
-    filename = "{}.crag.json".format(object_id)
+    filename = "{}.json".format(object_id)
     data_key = "data/{}".format(filename)
     
     datetime_stamp = datetime.datetime.now().strftime("%G%m%d.%H%M%S.%f")
