@@ -1,10 +1,12 @@
+import os
 import json
-import boto3
 import datetime
-
-BUCKET_NAME = "test.data.thegnarlytyke.com"
+import boto3
+from botocore.errorfactory import ClientError
 
 def lambda_handler(event, context):
+
+    BUCKET_NAME = os.environ.get('BUCKET_NAME')
 
     string = event['body']
     encoded_string = string.encode("utf-8")
@@ -17,10 +19,13 @@ def lambda_handler(event, context):
     data_key = "data/{}".format(filename)
     
     datetime_stamp = datetime.datetime.now().strftime("%G%m%d.%H%M%S.%f")
-    backup_data_key = "backup/data/{}.{}.crag.json".format(object_id,datetime_stamp)
+    backup_data_key = "backup/data/{}.{}.json".format(object_id,datetime_stamp)
     
     copy_source={'Bucket':BUCKET_NAME,'Key':data_key}
-    s3.copy_object(CopySource=copy_source,Bucket=BUCKET_NAME,Key=backup_data_key)
+    try:
+        s3.copy_object(CopySource=copy_source,Bucket=BUCKET_NAME,Key=backup_data_key)
+    except ClientError:
+        print("backup failed")
 
     s3.put_object(Bucket=BUCKET_NAME, Key=data_key, Body=encoded_string)
     

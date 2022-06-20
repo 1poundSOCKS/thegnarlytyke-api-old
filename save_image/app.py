@@ -1,12 +1,14 @@
+import os
 import json
 import boto3
 import base64
 import datetime
 
-BUCKET_NAME = "test.data.thegnarlytyke.com"
 STORE_TEXT_DATA = False
 
 def lambda_handler(event, context):
+
+    BUCKET_NAME = os.environ.get('BUCKET_NAME')
 
     string = event['body']
     encoded_string = string.encode("utf-8")
